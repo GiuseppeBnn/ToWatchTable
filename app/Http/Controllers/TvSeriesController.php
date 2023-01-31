@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TvSeries;
 use App\Http\Requests\StoreTvSeriesRequest;
 use App\Http\Requests\UpdateTvSeriesRequest;
+use App\Models\Director;
 
 class TvSeriesController extends Controller
 {
@@ -26,7 +27,8 @@ class TvSeriesController extends Controller
      */
     public function create()
     {
-        return view("tvseries.create");
+        $directors = Director::all();
+        return view("tvseries.create",compact('directors'));
     }
 
     /**
@@ -43,6 +45,12 @@ class TvSeriesController extends Controller
         $tvseries->year = request('year');
         $tvseries->season = request('season');
         $tvseries->episodes = request('episodes');
+        $tvseries->director_id=request('director_id');
+        $tvseries->platform = request('platform');
+        $director = Director::findOrFail($tvseries->director_id);
+        $tvseries->director = $director->name . " " . $director->surname;
+        $tvseries->save();
+        return redirect('/tvseries');
     }
 
     /**
@@ -51,9 +59,10 @@ class TvSeriesController extends Controller
      * @param  \App\Models\TvSeries  $tvSeries
      * @return \Illuminate\Http\Response
      */
-    public function show(TvSeries $tvSeries)
+    public function show(TvSeries $tvseries)
     {
-        //
+       // $tvseries = TvSeries::find($tvSeries->id);
+        return view("tvseries.show", compact('tvseries'));
     }
 
     /**
@@ -62,9 +71,11 @@ class TvSeriesController extends Controller
      * @param  \App\Models\TvSeries  $tvSeries
      * @return \Illuminate\Http\Response
      */
-    public function edit(TvSeries $tvSeries)
+    public function edit(TvSeries $tvseries)
     {
-        //
+        $directors=Director::all();
+        $array = ["tvseries" => $tvseries, "directors" => $directors];
+        return view("tvseries.update", $array);
     }
 
     /**
@@ -74,9 +85,20 @@ class TvSeriesController extends Controller
      * @param  \App\Models\TvSeries  $tvSeries
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTvSeriesRequest $request, TvSeries $tvSeries)
+    public function update(UpdateTvSeriesRequest $request, TvSeries $tvseries)
     {
-        //
+
+        $tvseries->name = request('name');
+        $tvseries->genre = request('genre');
+        $tvseries->year = request('year');
+        $tvseries->season = request('season');
+        $tvseries->episodes = request('episodes');
+        $tvseries->director_id=request('director_id');
+        $tvseries->platform = request('platform');
+        $director = Director::findOrFail($tvseries->director_id);
+        $tvseries->director = $director->name . " " . $director->surname;
+        $tvseries->save();
+        return redirect('/tvseries');
     }
 
     /**
@@ -85,8 +107,9 @@ class TvSeriesController extends Controller
      * @param  \App\Models\TvSeries  $tvSeries
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TvSeries $tvSeries)
+    public function destroy(TvSeries $tvseries)
     {
-        //
+        $tvseries->delete();
+        return redirect("/tvseries");
     }
 }

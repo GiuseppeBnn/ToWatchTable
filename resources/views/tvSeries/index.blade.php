@@ -3,7 +3,7 @@
 <ul>
     @foreach ($tvseries as $series)
         <li style="font-size: 40px">{{$series->name}}</li>
-        <a href="/films/{{$series->id}}">Dettagli</a><br><br>
+        <a href="/tvseries/{{$series->id}}">Dettagli</a><br><br>
 
     @endforeach
 
